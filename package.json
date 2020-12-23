@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.21.0",
     "dotenv": "^8.2.0",
     "hls-parser": "^0.6.4",
+    "node-hls-downloader": "^1.2.0",
     "puppeteer": "^5.5.0",
     "puppeteer-cluster": "^0.22.0"
   }
