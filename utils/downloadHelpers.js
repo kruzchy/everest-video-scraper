@@ -24,7 +24,7 @@ class DownloadHelper {
 
     downloadDirectVideo =  (videoData) => {
 
-        let {src, label, idx, title, videoUrl, segments} = videoData;
+        let {src, label, idx, title, videoUrl, segments, cookie} = videoData;
         title = filenamify(title, {replacement: "-"});
         const fileName = `${idx}_${title}.mp4`
         this.createDirectoryIfNotExists(path.resolve(this.rootPath, "videos"));
@@ -35,13 +35,17 @@ class DownloadHelper {
 
         console.log("[INFO]Trying to download", title, label);
 
-        const command = `streamlink --hls-segment-threads ${numThreads} "${src}" best -o "${finalFilePath}" --force`
-        // const command = `streamlink --http-header cookie="${cookie}" --hls-segment-threads ${numThreads} "${src}" best -o "${finalFilePath}" --force`
+        // const command = `youtube-dl -f bestvideo[height=480]+bestaudio[ext=m4a]/best ${src} -o "${finalFilePath}"`
+        // const command = `youtube-dl -f best ${src} -o "${finalFilePath}"`
+        // const command = `youtube-dl --external-downloader aria2c --external-downloader-args "-j 2 -s 8 -x 8 -k 10M" -f bestvideo[height=480]+bestaudio[ext=m4a]/best ${src} -o "${finalFilePath}"`
+        // const command = `youtube-dl --external-downloader aria2c --external-downloader-args "-c -j 16 -x 16 -s 16" -f bestvideo[height=480]+bestaudio[ext=m4a]/best ${src} -o "${finalFilePath}"`
+        const command = `streamlink --http-header cookie="${cookie}" --hls-segment-threads ${numThreads} "${src}" best -o "${finalFilePath}" --force`
         const streamlinkCmd = spawn(command, {shell: true});
         return new Promise((resolve => {
             let stdoutMsg = '';
             streamlinkCmd.stdout.on("data", (data)=>{
                 stdoutMsg += data.toString('utf8');
+                process.stdout.write(data);
             });
             streamlinkCmd.stderr.on("data", (data)=>{
                 stdoutMsg += data.toString('utf8');
@@ -66,7 +70,7 @@ class DownloadHelper {
     };
 
     downloadAllDirectVideos = async () => {
-        this.allVideoData = JSON.parse(fs.readFileSync(path.resolve(this.rootPath, "data", "vimeo.json"), "utf8"));
+        this.allVideoData = JSON.parse(fs.readFileSync(path.resolve(this.rootPath, "data", "direct.json"), "utf8"));
         const downloadVideoPromieses = [];
         for (let data of this.allVideoData) {
             downloadVideoPromieses.push(limit(()=>this.downloadDirectVideo(data)));
@@ -77,16 +81,7 @@ class DownloadHelper {
 
 
 const main = async ()=>{
-    const data = {
-        "videoUrl": "https://www.everestimpact.live/copy-averages-pyq-2-2136736",
-        "idx": 48,
-        "label": "ARITHMETIC",
-        "videoId": "2136736",
-        "title": "dummy",
-        "src": "https://www.youtube.com/watch?v=h6b5nh7id9o"
-    };
     const app = new DownloadHelper();
     await app.downloadAllDirectVideos();
-    // await app.downloadDirectVideo(data)
 };
 main();

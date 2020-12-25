@@ -125,7 +125,6 @@ class App {
         } else {
             await page.waitForSelector("#VideoHere", {visible: true});
             await page.click("#VideoHere>div");
-
             await page.waitForSelector("body > img", {timeout: 15000});
             const getCookieUrl = await page.evaluate(()=>document.querySelector("body > img").getAttribute("src"));
             const primaryPlaylistUrl =  decodeURIComponent(getCookieUrl.split("&stream=")[1].split("&fromWeb")[0].trim());

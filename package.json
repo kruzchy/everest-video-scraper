@@ -11,14 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "@tedconf/fessonia": "^2.1.2",
-    "axios": "^0.21.0",
-    "crypto-js": "^4.0.0",
     "dotenv": "^8.2.0",
     "filenamify": "^4.2.0",
     "hls-parser": "^0.6.4",
-    "hlsdownloader": "^2.2.3",
-    "node-hls-downloader": "^1.2.0",
-    "node-worker-threads-pool": "^1.4.3",
     "p-limit": "^3.1.0",
     "puppeteer": "^5.5.0",
     "puppeteer-cluster": "^0.22.0"
