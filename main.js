@@ -42,7 +42,7 @@ class App {
 
         const notFound = this.allVideoUrls.filter(urlObj=>!this.videoDataResults.map(data=>data.videoUrl).includes(urlObj.href))
         console.log("not found", notFound.length);
-        console.log(notFound);
+        console.log(notFound.map(item=>item.href));
 
         this.createJsonFile("direct", this.directVideoDataResults);
         this.createJsonFile("vimeo", this.vimeoVideoDataResults);
@@ -101,7 +101,8 @@ class App {
 
     getHlsVideoData = async ({page, data}) => {
         const videoUrl = data.href;
-        let videoData = {videoUrl: data.href, idx: data.idx, label: data.label};
+        const videoId = videoUrl.match(/\d+$/)[0]
+        let videoData = {videoUrl: data.href, idx: data.idx, label: data.label, videoId};
         const response = await page.goto(videoUrl, {waitUntil: "load"})
         videoData.title = await page.evaluate(() => document.querySelector(".liveclasstitle").textContent);
         const ytLink = await page.evaluate(() => {
@@ -125,7 +126,7 @@ class App {
             await page.waitForSelector("#VideoHere", {visible: true});
             await page.click("#VideoHere>div");
 
-            await page.waitForSelector("body > img", {timeout: 10000});
+            await page.waitForSelector("body > img", {timeout: 15000});
             const getCookieUrl = await page.evaluate(()=>document.querySelector("body > img").getAttribute("src"));
             const primaryPlaylistUrl =  decodeURIComponent(getCookieUrl.split("&stream=")[1].split("&fromWeb")[0].trim());
 
